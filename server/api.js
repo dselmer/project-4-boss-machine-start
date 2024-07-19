@@ -12,15 +12,6 @@ app.use("/api", apiRouter);
 
 // /api/minions
 
-// apiRouter.get("/minions", (req, res, next) => {
-//   const minionsFound = db.getAllFromDatabase();
-//   if (!minionsFound) {
-//     res.status(404).send("no minons found...");
-//   } else {
-//     res.send(minionsFound);
-//   }
-// });
-
 apiRouter.get("/minions", (req, res, next) => {
   try {
     const minionsFound = db.getAllFromDatabase();
