@@ -36,12 +36,35 @@ apiRouter.post("/minions", (req, res, next) => {
 });
 
 apiRouter.get("/minions/:id", (req, res, next) => {
-  let minionId = String(req.params.id);
+  let minionId = req.params.id;
   const foundMinion = db.getFromDatabaseById(message.minions, minionId);
-  if (typeof minionId === "string" && foundMinion) {
+  if (foundMinion) {
     res.json(foundMinion);
   } else {
     res.status(404).json(message.noMinionsFoundError);
+  }
+});
+
+apiRouter.put("/minions/:id", (req, res, next) => {
+  let minionId = req.params.id;
+  const minionToUpdate = db.getFromDatabaseById(message.minions, minionId);
+  try {
+    if (minionId && minionToUpdate) {
+      const updatedMinion = {
+        id: minionId,
+        name: req.body.name || minionToUpdate.name,
+        title: req.body.title || minionToUpdate.title,
+        weaknesses: req.body.weaknesses || minionToUpdate.weaknesses,
+        salary: Number(req.body.salary) || minionToUpdate.salary,
+      };
+      db.updateInstanceInDatabase(message.minions, updatedMinion);
+      res.json(updatedMinion);
+    } else {
+      res.status(404).json(message.noMinionsFoundError);
+    }
+  } catch (error) {
+    console.error("There was a problem updating the minion", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
