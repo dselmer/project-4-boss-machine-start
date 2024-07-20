@@ -2,12 +2,14 @@ const express = require("express");
 const app = express();
 const apiRouter = express.Router();
 const bodyParser = require("body-parser");
+const morgan = require("morgan");
 const cors = require("cors");
 const jsonParser = bodyParser.json();
 const db = require("./db");
 
 app.use(bodyParser.json());
 app.use(cors());
+app.use(morgan("dev"));
 app.use("/api", apiRouter);
 
 // /api/minions
