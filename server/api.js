@@ -16,7 +16,7 @@ app.use("/api", apiRouter);
 
 apiRouter.get("/minions", (req, res, next) => {
   try {
-    const minionsFound = db.getAllFromDatabase();
+    const minionsFound = db.getAllFromDatabase("minions");
     if (!minionsFound) {
       res.status(404).json({ message: "no minons found." });
     } else {
@@ -29,7 +29,9 @@ apiRouter.get("/minions", (req, res, next) => {
 });
 
 apiRouter.post("/minions", (req, res, next) => {
-  res.send(db.getAllFromDatabase());
+  const newMinion = db.createMinion();
+  db.addToDatabase(newMinion);
+  res.json(newMinion);
 });
 
 const PORT = process.env.PORT || 3001;
