@@ -17,9 +17,9 @@ app.use("/api", apiRouter);
 
 apiRouter.get("/minions", (req, res, next) => {
   try {
-    const minionsFound = db.getAllFromDatabase(message.Minions);
+    const minionsFound = db.getAllFromDatabase(message.minions);
     if (!minionsFound) {
-      res.status(404).json(message.noDataError.message);
+      res.status(404).json(message.noMinionsFoundError);
     } else {
       res.status(200).json(minionsFound);
     }
@@ -31,17 +31,17 @@ apiRouter.get("/minions", (req, res, next) => {
 
 apiRouter.post("/minions", (req, res, next) => {
   const newMinion = db.createMinion();
-  db.addToDatabase(newMinion);
+  db.addToDatabase(message.minions, newMinion);
   res.json(newMinion);
 });
 
 apiRouter.get("/minions/:id", (req, res, next) => {
-  const minionId = Number(req.params.id);
-  const foundMinion = db.getFromDatabaseById(MINIONS, minionId);
-  if (typeof minionId === "number" && foundMinion) {
+  let minionId = String(req.params.id);
+  const foundMinion = db.getFromDatabaseById(message.minions, minionId);
+  if (typeof minionId === "string" && foundMinion) {
     res.json(foundMinion);
   } else {
-    res.status(404).json({ message: "minion not found" });
+    res.status(404).json(message.noMinionsFoundError);
   }
 });
 

@@ -1,6 +1,5 @@
-const Minions = "minions";
-import Minion from "../browser/components/Minion";
+const minions = "minions";
 
-const noDataError = { message: "no Minons found" };
+const noMinionsFoundError = { message: "no Minons found" };
 
-module.exports = { Minions, noDataError };
+module.exports = { minions, noMinionsFoundError };
