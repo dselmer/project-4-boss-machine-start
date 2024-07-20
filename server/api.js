@@ -6,6 +6,7 @@ const morgan = require("morgan");
 const cors = require("cors");
 const jsonParser = bodyParser.json();
 const db = require("./db");
+const message = require("./message");
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -16,9 +17,9 @@ app.use("/api", apiRouter);
 
 apiRouter.get("/minions", (req, res, next) => {
   try {
-    const minionsFound = db.getAllFromDatabase("minions");
+    const minionsFound = db.getAllFromDatabase(message.Minions);
     if (!minionsFound) {
-      res.status(404).json({ message: "no minons found." });
+      res.status(404).json(message.noDataError.message);
     } else {
       res.status(200).json(minionsFound);
     }
@@ -32,6 +33,16 @@ apiRouter.post("/minions", (req, res, next) => {
   const newMinion = db.createMinion();
   db.addToDatabase(newMinion);
   res.json(newMinion);
+});
+
+apiRouter.get("/minions/:id", (req, res, next) => {
+  const minionId = Number(req.params.id);
+  const foundMinion = db.getFromDatabaseById(MINIONS, minionId);
+  if (typeof minionId === "number" && foundMinion) {
+    res.json(foundMinion);
+  } else {
+    res.status(404).json({ message: "minion not found" });
+  }
 });
 
 const PORT = process.env.PORT || 3001;
