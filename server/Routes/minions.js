@@ -1,6 +1,5 @@
+const { minions, noMinionsFoundError } = require("../message");
 const express = require("express");
-const { minions } = require("../message");
-const app = express();
 const router = express.Router();
 const db = require("../db");
 const message = require("../message");
@@ -9,9 +8,9 @@ const message = require("../message");
 
 router.param("id", (req, res, next, id) => {
   req.id = id;
-  const foundMinion = db.getFromDatabaseById(message.minions, id);
+  const foundMinion = db.getFromDatabaseById(minions, id);
   if (!foundMinion) {
-    return res.status(404).send(message.noMinionsFoundError);
+    return res.status(404).send(noMinionsFoundError);
   } else {
     req.minion = foundMinion;
     next();
@@ -20,9 +19,9 @@ router.param("id", (req, res, next, id) => {
 
 router.get("/minions", (req, res, next) => {
   try {
-    const minionsFound = db.getAllFromDatabase(message.minions, req.id);
+    const minionsFound = db.getAllFromDatabase(minions, req.id);
     if (!minionsFound) {
-      res.status(404).json(message.noMinionsFoundError);
+      res.status(404).json(noMinionsFoundError);
     } else {
       res.status(200).send(minionsFound);
     }
@@ -34,7 +33,7 @@ router.get("/minions", (req, res, next) => {
 
 router.post("/minions", (req, res, next) => {
   const newMinion = db.createMinion();
-  db.addToDatabase(message.minions, newMinion);
+  db.addToDatabase(minions, newMinion);
   res.json(newMinion);
 });
 
@@ -61,11 +60,11 @@ router.put("/minions/:id", (req, res, next) => {
 });
 
 router.delete("/minions/:id", (req, res, next) => {
-  const deleted = db.deleteFromDatabasebyId(message.minions, req.id);
+  const deleted = db.deleteFromDatabasebyId(minions, req.id);
   if (deleted) {
     res.sendStatus(204); // No Content
   } else {
-    res.status(404).json({ error: message.noMinionsFoundError });
+    res.status(404).json({ error: noMinionsFoundError });
   }
 });
 
