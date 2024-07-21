@@ -17,4 +17,31 @@ router.get("/ideas", (req, res, next) => {
   }
 });
 
+router.post("/ideas", (req, res, next) => {
+  const createdNewIdea = {
+    id: null,
+    name: req.body.name,
+    description: req.body.description,
+    weeklyRevenue: Number(req.body.weeklyRevenue),
+    numWeeks: Number(req.body.numWeeks),
+  };
+  const isValidIdea = Object.values(createdNewIdea).every((idea) => {
+    const newIdea = new Boolean(idea);
+    return newIdea;
+  });
+
+  try {
+    if (!isValidIdea) {
+      return res
+        .status(400)
+        .json({ error: "new idea cant be created, missing key value pairs" });
+    }
+    db.addToDatabase(ideas, createdNewIdea);
+    res.status(201).json(createdNewIdea);
+  } catch (err) {
+    console.error("trouble creating new Idea");
+    res.status(500).json({ error: "internal server error" });
+  }
+});
+
 module.exports = router;
