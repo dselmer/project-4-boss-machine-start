@@ -70,4 +70,9 @@ router.put("/ideas/:id", (req, res, next) => {
   res.status(202).json(updatedIdea);
 });
 
+router.delete("/ideas/:id", (req, res, next) => {
+  const deletedIdea = db.deleteFromDatabasebyId(ideas, req.id);
+  res.sendStatus(204);
+});
+
 module.exports = router;
