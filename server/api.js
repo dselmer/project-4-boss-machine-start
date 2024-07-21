@@ -62,7 +62,6 @@ apiRouter.put("/minions/:id", (req, res, next) => {
       weaknesses: req.body.weaknesses || minionToUpdate.weaknesses,
       salary: Number(req.body.salary) || minionToUpdate.salary,
     };
-
     db.updateInstanceInDatabase(message.minions, updatedMinion);
     res.json(updatedMinion);
   } catch (error) {
