@@ -1,5 +1,5 @@
 const minions = "minions";
 
-const noMinionsFoundError = { message: "no Minons found" };
+const noMinionsFoundError = { error: "no Minons found" };
 
 module.exports = { minions, noMinionsFoundError };

@@ -15,9 +15,10 @@ app.use("/api", apiRouter);
 // /api/minions
 
 apiRouter.param("id", (req, res, next, id) => {
-  foundMinion = db.getFromDatabaseById(message.minions, id);
+  req.id = id;
+  const foundMinion = db.getFromDatabaseById(message.minions, id);
   if (!foundMinion) {
-    res.status(404).send(message.noMinionsFoundError);
+    return res.status(404).send(message.noMinionsFoundError);
   } else {
     req.minion = foundMinion;
     next();
@@ -52,22 +53,18 @@ apiRouter.get("/minions/:id", (req, res, next) => {
 });
 
 apiRouter.put("/minions/:id", (req, res, next) => {
-  let minionId = req.params.id;
-  const minionToUpdate = db.getFromDatabaseById(message.minions, minionId);
+  const minionToUpdate = req.minion;
   try {
-    if (minionId && minionToUpdate) {
-      const updatedMinion = {
-        id: minionId,
-        name: req.body.name || minionToUpdate.name,
-        title: req.body.title || minionToUpdate.title,
-        weaknesses: req.body.weaknesses || minionToUpdate.weaknesses,
-        salary: Number(req.body.salary) || minionToUpdate.salary,
-      };
-      db.updateInstanceInDatabase(message.minions, updatedMinion);
-      res.json(updatedMinion);
-    } else {
-      res.status(404).json(message.noMinionsFoundError);
-    }
+    const updatedMinion = {
+      id: req.id,
+      name: req.body.name || minionToUpdate.name,
+      title: req.body.title || minionToUpdate.title,
+      weaknesses: req.body.weaknesses || minionToUpdate.weaknesses,
+      salary: Number(req.body.salary) || minionToUpdate.salary,
+    };
+
+    db.updateInstanceInDatabase(message.minions, updatedMinion);
+    res.json(updatedMinion);
   } catch (error) {
     console.error("There was a problem updating the minion", error);
     res.status(500).json({ message: "Internal Server Error" });
