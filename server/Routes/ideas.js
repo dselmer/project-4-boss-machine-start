@@ -4,6 +4,16 @@ const router = express.Router();
 const db = require("../db");
 const message = require("../message");
 
+router.param("id", (req, res, next, id) => {
+  const foundIdea = db.getFromDatabaseById(ideas, id);
+  if (!foundIdea) {
+    return res.status(404).json({ error: "Not Found" });
+  }
+  req.id = id;
+  req.idea = foundIdea;
+  next();
+});
+
 router.get("/ideas", (req, res, next) => {
   const allIdeas = db.getAllFromDatabase(ideas);
   try {
@@ -42,6 +52,10 @@ router.post("/ideas", (req, res, next) => {
     console.error("trouble creating new Idea");
     res.status(500).json({ error: "internal server error" });
   }
+});
+
+router.get("/ideas/:id", (req, res, next) => {
+  res.json(req.idea);
 });
 
 module.exports = router;
