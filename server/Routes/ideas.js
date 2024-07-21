@@ -58,4 +58,16 @@ router.get("/ideas/:id", (req, res, next) => {
   res.json(req.idea);
 });
 
+router.put("/ideas/:id", (req, res, next) => {
+  const ideaToUpdate = {
+    id: req.id,
+    name: req.body.name || req.idea.name,
+    description: req.body.description || req.idea.description,
+    weeklyRevenue: req.body.weeklyRevenue || req.idea.weeklyRevenue,
+    numWeeks: req.body.numWeeks || req.idea.numWeeks,
+  };
+  const updatedIdea = db.updateInstanceInDatabase(ideas, ideaToUpdate);
+  res.status(202).json(updatedIdea);
+});
+
 module.exports = router;
