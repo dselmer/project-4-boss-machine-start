@@ -290,5 +290,4 @@ module.exports = {
   deleteFromDatabasebyId,
   deleteAllFromDatabase,
   createMinion,
-  allMinions,
 };

@@ -26,15 +26,12 @@ apiRouter.param("id", (req, res, next, id) => {
 });
 
 apiRouter.get("/minions", (req, res, next) => {
-  const arr = [1, 3, 4];
   try {
-    const minionsFound = db.getAllFromDatabase(message.minions);
+    const minionsFound = db.getAllFromDatabase(message.minions, req.id);
     if (!minionsFound) {
       res.status(404).json(message.noMinionsFoundError);
     } else {
-      const arrayOfAllMinions = Object.values(db.allMinions);
-      console.log(arrayOfAllMinions);
-      res.status(200).send(arrayOfAllMinions);
+      res.status(200).send(minionsFound);
     }
   } catch (error) {
     console.error("Error retrieving minions:", error);
@@ -70,7 +67,14 @@ apiRouter.put("/minions/:id", (req, res, next) => {
   }
 });
 
-apiRouter.delete("/minions/:id", (req, res, next) => {});
+apiRouter.delete("/minions/:id", (req, res, next) => {
+  const deleted = db.deleteFromDatabasebyId(message.minions, req.id);
+  if (deleted) {
+    res.sendStatus(204); // No Content
+  } else {
+    res.status(404).json({ error: message.noMinionsFoundError });
+  }
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
