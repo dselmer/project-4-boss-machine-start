@@ -4,7 +4,6 @@ const apiRouter = express.Router();
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const cors = require("cors");
-const jsonParser = bodyParser.json();
 const db = require("./db");
 const message = require("./message");
 
@@ -15,13 +14,26 @@ app.use("/api", apiRouter);
 
 // /api/minions
 
+apiRouter.param("id", (req, res, next, id) => {
+  foundMinion = db.getFromDatabaseById(message.minions, id);
+  if (!foundMinion) {
+    res.status(404).send(message.noMinionsFoundError);
+  } else {
+    req.minion = foundMinion;
+    next();
+  }
+});
+
 apiRouter.get("/minions", (req, res, next) => {
+  const arr = [1, 3, 4];
   try {
     const minionsFound = db.getAllFromDatabase(message.minions);
     if (!minionsFound) {
       res.status(404).json(message.noMinionsFoundError);
     } else {
-      res.status(200).json(minionsFound);
+      const arrayOfAllMinions = Object.values(db.allMinions);
+      console.log(arrayOfAllMinions);
+      res.status(200).send(arrayOfAllMinions);
     }
   } catch (error) {
     console.error("Error retrieving minions:", error);
@@ -36,13 +48,7 @@ apiRouter.post("/minions", (req, res, next) => {
 });
 
 apiRouter.get("/minions/:id", (req, res, next) => {
-  let minionId = req.params.id;
-  const foundMinion = db.getFromDatabaseById(message.minions, minionId);
-  if (foundMinion) {
-    res.json(foundMinion);
-  } else {
-    res.status(404).json(message.noMinionsFoundError);
-  }
+  res.json(req.minion);
 });
 
 apiRouter.put("/minions/:id", (req, res, next) => {
@@ -68,7 +74,9 @@ apiRouter.put("/minions/:id", (req, res, next) => {
   }
 });
 
-const PORT = process.env.PORT || 3001;
+apiRouter.delete("/minions/:id", (req, res, next) => {});
+
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
